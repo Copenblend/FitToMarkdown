@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Spectre.Console.Testing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FitToMarkdown.Cli\FitToMarkdown.Cli.csproj" />
+    <ProjectReference Include="..\..\src\FitToMarkdown.Core\FitToMarkdown.Core.csproj" />
+    <ProjectReference Include="..\..\src\FitToMarkdown.Fit\FitToMarkdown.Fit.csproj" />
+    <ProjectReference Include="..\..\src\FitToMarkdown.Markdown\FitToMarkdown.Markdown.csproj" />
+  </ItemGroup>
+</Project>

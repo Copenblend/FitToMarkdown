@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="Markdig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FitToMarkdown.Core\FitToMarkdown.Core.csproj" />
+  </ItemGroup>
+</Project>
