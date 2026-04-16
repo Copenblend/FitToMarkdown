@@ -6,4 +6,8 @@
   <ItemGroup>
     <ProjectReference Include="..\FitToMarkdown.Core\FitToMarkdown.Core.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="FitToMarkdown.Markdown.Tests" />
+  </ItemGroup>
 </Project>
