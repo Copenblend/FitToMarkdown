@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using FitToMarkdown.Cli.Models;
 using FitToMarkdown.Core.Abstractions;
-using FitToMarkdown.Core.Parsing;
 
 namespace FitToMarkdown.Cli.Services;
 
@@ -11,6 +10,7 @@ internal sealed class ConversionBatchRunner
     private readonly IFitMarkdownProjector _projector;
     private readonly IMarkdownDocumentGenerator _generator;
     private readonly ICliFileSystem _fileSystem;
+    private readonly FitParseOptionsFactory _parseOptionsFactory;
     private readonly MarkdownOptionsFactory _optionsFactory;
     private readonly OutputPathResolver _outputPathResolver;
     private readonly ConvertPromptService _promptService;
@@ -20,6 +20,7 @@ internal sealed class ConversionBatchRunner
         IFitMarkdownProjector projector,
         IMarkdownDocumentGenerator generator,
         ICliFileSystem fileSystem,
+        FitParseOptionsFactory parseOptionsFactory,
         MarkdownOptionsFactory optionsFactory,
         OutputPathResolver outputPathResolver,
         ConvertPromptService promptService)
@@ -28,6 +29,7 @@ internal sealed class ConversionBatchRunner
         _projector = projector;
         _generator = generator;
         _fileSystem = fileSystem;
+        _parseOptionsFactory = parseOptionsFactory;
         _optionsFactory = optionsFactory;
         _outputPathResolver = outputPathResolver;
         _promptService = promptService;
@@ -48,12 +50,7 @@ internal sealed class ConversionBatchRunner
 
             try
             {
-                var parseOptions = new FitParseOptions
-                {
-                    AllowPartialExtraction = true,
-                    RecoverTruncatedActivityFiles = true,
-                    ResolveDeveloperFields = true,
-                };
+                var parseOptions = _parseOptionsFactory.CreateForConvert();
 
                 var parseResult = await _parser.ParseFileAsync(file.FullPath, parseOptions, cancellationToken).ConfigureAwait(false);
 
