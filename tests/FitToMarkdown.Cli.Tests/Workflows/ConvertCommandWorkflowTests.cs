@@ -34,7 +34,7 @@ public sealed class ConvertCommandWorkflowTests
         var optionsFactory = new MarkdownOptionsFactory();
         var outputPathResolver = new OutputPathResolver();
         var batchRunner = new ConversionBatchRunner(
-            _parser, projector, _generator, _fileSystem, optionsFactory, outputPathResolver, promptService);
+            _parser, projector, _generator, _fileSystem, new FitParseOptionsFactory(), optionsFactory, outputPathResolver, promptService);
         var summaryRenderer = new ConvertSummaryRenderer(_console);
         var exceptionRenderer = new CliExceptionRenderer(_console);
 
