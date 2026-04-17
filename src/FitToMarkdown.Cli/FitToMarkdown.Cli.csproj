@@ -10,6 +10,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="FitToMarkdown.Cli.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FitToMarkdown.Core\FitToMarkdown.Core.csproj" />
     <ProjectReference Include="..\FitToMarkdown.Fit\FitToMarkdown.Fit.csproj" />
     <ProjectReference Include="..\FitToMarkdown.Markdown\FitToMarkdown.Markdown.csproj" />
