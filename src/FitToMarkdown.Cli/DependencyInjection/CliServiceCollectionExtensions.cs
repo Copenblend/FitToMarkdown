@@ -1,6 +1,7 @@
 using FitToMarkdown.Cli.Commands.Convert;
 using FitToMarkdown.Cli.Commands.Info;
 using FitToMarkdown.Cli.Commands.Interactive;
+using FitToMarkdown.Cli.Commands.Progression;
 using FitToMarkdown.Cli.Commands.Version;
 using FitToMarkdown.Cli.Rendering;
 using FitToMarkdown.Cli.Services;
@@ -46,6 +47,19 @@ internal static class CliServiceCollectionExtensions
             sp.GetRequiredService<IAnsiConsole>()));
         services.AddSingleton(_ => new BatchConcurrencyPolicy());
 
+        services.AddSingleton(sp => new SportScanService(
+            sp.GetRequiredService<IFitMetadataInspector>()));
+        services.AddSingleton(_ => new ProgressionDocumentInserter());
+        services.AddSingleton(sp => new ProgressionSummaryRenderer(
+            sp.GetRequiredService<IAnsiConsole>()));
+
+        services.AddTransient(sp => new ProgressionDocumentBuilder(
+            sp.GetRequiredService<IFitFileParser>(),
+            sp.GetRequiredService<IFitMarkdownProjector>(),
+            sp.GetRequiredService<IMarkdownDocumentGenerator>(),
+            sp.GetRequiredService<FitParseOptionsFactory>(),
+            sp.GetRequiredService<MarkdownOptionsFactory>()));
+
         services.AddTransient(sp => new ConversionBatchRunner(
             sp.GetRequiredService<IFitFileParser>(),
             sp.GetRequiredService<IFitMarkdownProjector>(),
@@ -77,11 +91,22 @@ internal static class CliServiceCollectionExtensions
         services.AddTransient<IVersionCommandWorkflow>(sp => new VersionCommandWorkflow(
             sp.GetRequiredService<IAnsiConsole>(),
             sp.GetRequiredService<CliVersionProvider>()));
+        services.AddTransient<IProgressionCommandWorkflow>(sp => new ProgressionCommandWorkflow(
+            sp.GetRequiredService<IAnsiConsole>(),
+            sp.GetRequiredService<ICliFileSystem>(),
+            sp.GetRequiredService<InputPathResolver>(),
+            sp.GetRequiredService<FitFileDiscoveryService>(),
+            sp.GetRequiredService<SportScanService>(),
+            sp.GetRequiredService<ProgressionDocumentBuilder>(),
+            sp.GetRequiredService<ProgressionDocumentInserter>(),
+            sp.GetRequiredService<ProgressionSummaryRenderer>(),
+            sp.GetRequiredService<CliExceptionRenderer>()));
 
         services.AddSingleton(sp => new InteractiveMenuWorkflow(
             sp.GetRequiredService<IAnsiConsole>(),
             sp.GetRequiredService<IConvertCommandWorkflow>(),
             sp.GetRequiredService<IInfoCommandWorkflow>(),
+            sp.GetRequiredService<IProgressionCommandWorkflow>(),
             sp.GetRequiredService<IVersionCommandWorkflow>(),
             sp.GetRequiredService<InputPathResolver>(),
             sp.GetRequiredService<CliExceptionRenderer>()));

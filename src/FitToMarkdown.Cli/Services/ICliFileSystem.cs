@@ -11,4 +11,5 @@ internal interface ICliFileSystem
     long GetFileLength(string path);
     void CreateDirectory(string path);
     Task WriteAllTextAsync(string path, string content, CancellationToken cancellationToken);
+    Task<string> ReadAllTextAsync(string path, CancellationToken cancellationToken);
 }

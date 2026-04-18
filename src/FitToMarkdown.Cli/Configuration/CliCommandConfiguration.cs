@@ -1,5 +1,6 @@
 using FitToMarkdown.Cli.Commands.Convert;
 using FitToMarkdown.Cli.Commands.Info;
+using FitToMarkdown.Cli.Commands.Progression;
 using FitToMarkdown.Cli.Commands.Version;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -31,6 +32,12 @@ public static class CliCommandConfiguration
         configurator.AddCommand<InfoCommand>("info")
             .WithDescription("Display FIT metadata without generating markdown.")
             .WithExample("info", "activity.fit");
+
+        configurator.AddCommand<ProgressionCommand>("progression")
+            .WithDescription("Build or update a sport progression document from FIT files.")
+            .WithExample("progression", "activities", "--sport", "Running")
+            .WithExample("progression", "activities", "--sport", "Cycling", "--output", "docs")
+            .WithExample("progression", "--add", "new-run.fit", "--progression-file", "Running_Progression_20250101.md");
 
         configurator.AddCommand<VersionCommand>("version")
             .WithDescription("Display the installed application version.")

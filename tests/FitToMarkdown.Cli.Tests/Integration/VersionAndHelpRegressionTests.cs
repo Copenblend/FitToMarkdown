@@ -18,6 +18,7 @@ public sealed class VersionAndHelpRegressionTests
         exitCode.Should().Be(0);
         console.Output.Should().Contain("convert");
         console.Output.Should().Contain("info");
+        console.Output.Should().Contain("progression");
         console.Output.Should().Contain("version");
     }
 
@@ -31,6 +32,7 @@ public sealed class VersionAndHelpRegressionTests
 
         console.Output.Should().Contain("convert");
         console.Output.Should().Contain("info");
+        console.Output.Should().Contain("progression");
         console.Output.Should().Contain("version");
     }
 
