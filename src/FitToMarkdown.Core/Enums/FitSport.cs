@@ -152,6 +152,63 @@ public enum FitSport : byte
     /// <summary>Floor climbing.</summary>
     FloorClimbing = 48,
 
+    /// <summary>Baseball.</summary>
+    Baseball = 49,
+
+    /// <summary>Diving.</summary>
+    Diving = 53,
+
+    /// <summary>High-intensity interval training (HIIT).</summary>
+    Hiit = 62,
+
+    /// <summary>Racket sport (pickleball, padel, squash, etc.).</summary>
+    Racket = 64,
+
+    /// <summary>Wheelchair push walk.</summary>
+    WheelchairPushWalk = 65,
+
+    /// <summary>Wheelchair push run.</summary>
+    WheelchairPushRun = 66,
+
+    /// <summary>Meditation.</summary>
+    Meditation = 67,
+
+    /// <summary>Disc golf.</summary>
+    DiscGolf = 69,
+
+    /// <summary>Cricket.</summary>
+    Cricket = 71,
+
+    /// <summary>Rugby.</summary>
+    Rugby = 72,
+
+    /// <summary>Hockey.</summary>
+    Hockey = 73,
+
+    /// <summary>Lacrosse.</summary>
+    Lacrosse = 74,
+
+    /// <summary>Volleyball.</summary>
+    Volleyball = 75,
+
+    /// <summary>Water tubing.</summary>
+    WaterTubing = 76,
+
+    /// <summary>Wakesurfing.</summary>
+    Wakesurfing = 77,
+
+    /// <summary>Mixed martial arts.</summary>
+    MixedMartialArts = 80,
+
+    /// <summary>Snorkeling.</summary>
+    Snorkeling = 82,
+
+    /// <summary>Dance.</summary>
+    Dance = 83,
+
+    /// <summary>Jump rope.</summary>
+    JumpRope = 84,
+
     /// <summary>All sports.</summary>
     All = 254,
 

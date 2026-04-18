@@ -35,14 +35,14 @@ public sealed class VersionAndHelpRegressionTests
     }
 
     [Fact]
-    public void Application_name_is_fittomarkdown()
+    public void Application_name_is_ftm()
     {
         var console = new TestConsole();
         var app = ProductionCommandAppFactory.Create(console);
 
         app.Run(["--help"]);
 
-        console.Output.Should().Contain("fittomarkdown");
+        console.Output.Should().Contain("ftm");
     }
 
     [Fact]
@@ -54,6 +54,6 @@ public sealed class VersionAndHelpRegressionTests
         var exitCode = app.Run(["version"]);
 
         exitCode.Should().Be(0);
-        console.Output.Should().Contain("fittomarkdown");
+        console.Output.Should().Contain("ftm");
     }
 }

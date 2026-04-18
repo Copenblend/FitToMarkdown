@@ -25,7 +25,7 @@ public sealed class ProgramVersionSmokeTests : IDisposable
     {
         var result = await CliProcessRunner.RunAsync(["version"], _workspace.Root);
 
-        result.StandardOutput.Should().Contain("fittomarkdown");
+        result.StandardOutput.Should().Contain("ftm");
     }
 
     public void Dispose() => _workspace.Dispose();

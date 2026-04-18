@@ -19,7 +19,7 @@ internal sealed class VersionCommandWorkflow : IVersionCommandWorkflow
     public int Execute()
     {
         var version = _versionProvider.GetDisplayVersion();
-        _console.MarkupLine($"[cyan]fittomarkdown[/] {CliMarkup.Escape(version)}");
+        _console.MarkupLine($"[cyan]ftm[/] {CliMarkup.Escape(version)}");
         return CliExitCodes.Success;
     }
 }

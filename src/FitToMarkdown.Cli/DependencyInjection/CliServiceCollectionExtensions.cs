@@ -1,5 +1,6 @@
 using FitToMarkdown.Cli.Commands.Convert;
 using FitToMarkdown.Cli.Commands.Info;
+using FitToMarkdown.Cli.Commands.Interactive;
 using FitToMarkdown.Cli.Commands.Version;
 using FitToMarkdown.Cli.Rendering;
 using FitToMarkdown.Cli.Services;
@@ -71,10 +72,19 @@ internal static class CliServiceCollectionExtensions
             sp.GetRequiredService<ICliFileSystem>(),
             sp.GetRequiredService<IFitMetadataInspector>(),
             sp.GetRequiredService<InfoTableRenderer>(),
-            sp.GetRequiredService<CliExceptionRenderer>()));
+            sp.GetRequiredService<CliExceptionRenderer>(),
+            sp.GetRequiredService<InputPathResolver>()));
         services.AddTransient<IVersionCommandWorkflow>(sp => new VersionCommandWorkflow(
             sp.GetRequiredService<IAnsiConsole>(),
             sp.GetRequiredService<CliVersionProvider>()));
+
+        services.AddSingleton(sp => new InteractiveMenuWorkflow(
+            sp.GetRequiredService<IAnsiConsole>(),
+            sp.GetRequiredService<IConvertCommandWorkflow>(),
+            sp.GetRequiredService<IInfoCommandWorkflow>(),
+            sp.GetRequiredService<IVersionCommandWorkflow>(),
+            sp.GetRequiredService<InputPathResolver>(),
+            sp.GetRequiredService<CliExceptionRenderer>()));
 
         return services;
     }

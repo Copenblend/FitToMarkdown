@@ -80,7 +80,7 @@ internal static class DeviceAndProfileMapper
         return new FitUserProfile
         {
             Message = FitMessageIdentityFactory.Create(seq),
-            FriendlyName = ByteArrayToString(mesg.GetFriendlyName()),
+            FriendlyName = ByteArrayToString(SafeGet(mesg.GetFriendlyName)),
             Gender = MapGender(mesg.GetGender()),
             AgeYears = ToNullableByte(mesg.GetAge()),
             HeightCentimeters = ToNullableDouble(mesg.GetHeight()) is double h ? h * 100.0 : null,

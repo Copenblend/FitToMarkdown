@@ -30,6 +30,6 @@ public sealed class VersionCommandTests
         var exitCode = workflow.Execute();
 
         exitCode.Should().Be(CliExitCodes.Success);
-        console.Output.Should().Contain("fittomarkdown");
+        console.Output.Should().Contain("ftm");
     }
 }

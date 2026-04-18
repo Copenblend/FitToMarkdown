@@ -7,23 +7,21 @@ namespace FitToMarkdown.Cli.Tests.Commands;
 public sealed class InfoCommandTests
 {
     [Fact]
-    public void Validate_returns_error_for_empty_path()
+    public void Path_defaults_to_null()
     {
-        var settings = new InfoCommandSettings { Path = string.Empty };
+        var settings = new InfoCommandSettings();
 
-        var result = settings.Validate();
-
-        result.Successful.Should().BeFalse();
+        settings.Path.Should().BeNull();
     }
 
     [Fact]
-    public void Validate_returns_error_for_whitespace_path()
+    public void Validate_succeeds_for_null_path()
     {
-        var settings = new InfoCommandSettings { Path = "   " };
+        var settings = new InfoCommandSettings();
 
         var result = settings.Validate();
 
-        result.Successful.Should().BeFalse();
+        result.Successful.Should().BeTrue();
     }
 
     [Fact]
