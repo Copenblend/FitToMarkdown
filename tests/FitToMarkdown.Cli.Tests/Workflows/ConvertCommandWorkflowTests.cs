@@ -38,9 +38,12 @@ public sealed class ConvertCommandWorkflowTests
         var summaryRenderer = new ConvertSummaryRenderer(_console);
         var exceptionRenderer = new CliExceptionRenderer(_console);
 
+        var concurrencyPolicy = new BatchConcurrencyPolicy();
+
         _workflow = new ConvertCommandWorkflow(
             _console, _fileSystem, pathResolver, discoveryService, promptService,
-            optionsFactory, outputPathResolver, batchRunner, summaryRenderer, exceptionRenderer);
+            optionsFactory, outputPathResolver, batchRunner, summaryRenderer, exceptionRenderer,
+            concurrencyPolicy);
     }
 
     [Fact]

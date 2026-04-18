@@ -55,6 +55,10 @@ internal sealed class FitDocumentBuilder
         if (options.ResolveDeveloperFields && snapshot.FieldDescriptionMesgs.Count > 0)
         {
             devResolver = new FitDeveloperFieldResolver(snapshot.FieldDescriptionMesgs);
+            foreach (var (devIdx, fieldNum) in devResolver.DuplicateDefinitions)
+            {
+                issues.Add(FitParseIssueFactory.DuplicateDeveloperDefinition(devIdx, fieldNum));
+            }
         }
 
         // 3. Map file-level metadata
@@ -114,6 +118,11 @@ internal sealed class FitDocumentBuilder
             var groupingService = new FitActivityGroupingService();
             var grouped = groupingService.Group(sessions, laps, records, lengths, events);
 
+            foreach (var warning in grouped.AmbiguityWarnings)
+            {
+                issues.Add(FitParseIssueFactory.GroupingAmbiguous(warning));
+            }
+
             // Detect multi-sport and pool swim
             var isMultiSport = grouped.GroupedSessions.Count > 1
                 && grouped.GroupedSessions.Any(s => s.Sport == FitSport.Transition);
@@ -170,8 +179,27 @@ internal sealed class FitDocumentBuilder
             }
         }
 
+        // Monitoring integrity: decode faults in monitoring files are fatal
+        if (fileType is FitFileType.MonitoringA or FitFileType.MonitoringDaily && snapshot.HadDecodeFault)
+        {
+            issues.Add(FitParseIssueFactory.MonitoringIntegrityFailed(
+                snapshot.DecodeFaultMessage ?? "Decode fault in monitoring file."));
+        }
+
+        // Track unresolved developer fields
+        if (devResolver is not null)
+        {
+            foreach (var (devIdx, fieldNum) in devResolver.UnresolvedFields)
+            {
+                issues.Add(FitParseIssueFactory.UnresolvedDeveloperField(devIdx, fieldNum));
+            }
+        }
+
         // 8. Assemble document
         var parseMetadata = BuildMetadata(snapshot, issues, fileType, activityContent, recoveryUsed);
+
+        var fatalMonitoringError = issues
+            .FirstOrDefault(i => i.Code == "fit.monitoring-integrity-failed" && i.Severity == FitParseIssueSeverity.Error);
 
         var document = new FitFileDocument
         {
@@ -192,6 +220,15 @@ internal sealed class FitDocumentBuilder
             Document = document,
             Metadata = parseMetadata,
             Issues = issues,
+            FatalError = fatalMonitoringError is not null
+                ? new FitParseError
+                {
+                    Code = fatalMonitoringError.Code,
+                    Message = fatalMonitoringError.Message,
+                    Phase = "Build",
+                    Recoverable = false,
+                }
+                : null,
         };
     }
 

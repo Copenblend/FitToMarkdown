@@ -37,6 +37,18 @@ internal sealed class ConvertSummaryRenderer
 
         _console.Write(table);
 
+        string statusLabel = (summary.ConvertedCount, summary.FailedCount, summary.SkippedCount) switch
+        {
+            (> 0, 0, _) => "[green]All files converted successfully.[/]",
+            (> 0, > 0, _) => "[yellow]Some files failed during conversion.[/]",
+            (0, > 0, _) => "[red]All files failed during conversion.[/]",
+            (0, 0, > 0) => "[yellow]All files were skipped.[/]",
+            _ => string.Empty,
+        };
+
+        if (!string.IsNullOrEmpty(statusLabel))
+            _console.MarkupLine(statusLabel);
+
         var failures = summary.Results
             .Where(r => r.Status == ConvertFileResultStatus.Failed)
             .ToList();

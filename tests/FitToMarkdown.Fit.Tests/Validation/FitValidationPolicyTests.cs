@@ -22,7 +22,7 @@ public sealed class FitValidationPolicyTests
 
         result.IsValid.Should().BeFalse();
         result.Issues.Should().Contain(i =>
-            i.Code == "FIT_MISSING_FILE_ID" &&
+            i.Code == "fit.missing-file-id" &&
             i.Severity == FitParseIssueSeverity.Error);
     }
 
@@ -74,7 +74,7 @@ public sealed class FitValidationPolicyTests
 
         result.IsValid.Should().BeTrue(); // Warnings don't block
         result.Issues.Should().Contain(i =>
-            i.Code == "FIT_DECODE_FAULT" &&
+            i.Code == "fit.decode-fault" &&
             i.Severity == FitParseIssueSeverity.Warning);
     }
 }

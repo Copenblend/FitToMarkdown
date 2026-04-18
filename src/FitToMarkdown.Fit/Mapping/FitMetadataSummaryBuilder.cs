@@ -100,9 +100,22 @@ internal sealed class FitMetadataSummaryBuilder
             ? FitParseStatus.PartiallySucceeded
             : FitParseStatus.Succeeded;
 
+        var issues = new List<FitParseIssue>();
+
+        if (snapshot.FileIdMesgs.Count == 0)
+        {
+            issues.Add(FitParseIssueFactory.MetadataSummaryPartial("Missing File ID in metadata."));
+        }
+
+        if (snapshot.SessionMesgs.Count == 0 && snapshot.SportMesgs.Count == 0)
+        {
+            issues.Add(FitParseIssueFactory.MetadataSummaryPartial("No session or sport metadata available."));
+        }
+
         return new FitMetadataInspectionResult
         {
             Summary = summary,
+            Issues = issues,
             Metadata = new FitParseMetadata
             {
                 Status = status,

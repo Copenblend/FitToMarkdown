@@ -32,6 +32,18 @@ public class ConvertCommandSettings : CommandSettings
     /// <inheritdoc />
     public override ValidationResult Validate()
     {
+        if (NoInteraction && Overwrite is not null &&
+            Overwrite.Equals("ask-each", StringComparison.OrdinalIgnoreCase))
+        {
+            return ValidationResult.Error(
+                "Cannot use '--overwrite ask-each' with '--no-interaction'.");
+        }
+
+        if (OutputDirectory is not null && string.IsNullOrWhiteSpace(OutputDirectory))
+        {
+            return ValidationResult.Error("Output directory cannot be empty or whitespace.");
+        }
+
         if (Overwrite is not null &&
             !Overwrite.Equals("skip", StringComparison.OrdinalIgnoreCase) &&
             !Overwrite.Equals("overwrite", StringComparison.OrdinalIgnoreCase) &&

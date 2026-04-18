@@ -39,7 +39,7 @@ public sealed class FitSyntheticRecoveryServiceTests
         result.Activity.Should().NotBeNull();
         result.Activity!.Message.IsSynthetic.Should().BeTrue();
         result.UsedSyntheticActivity.Should().BeTrue();
-        result.Issues.Should().Contain(i => i.Code == "FIT_SYNTHETIC_ACTIVITY");
+        result.Issues.Should().Contain(i => i.Code == "fit.synthetic-activity");
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public sealed class FitSyntheticRecoveryServiceTests
         result.Sessions.Should().HaveCount(1);
         result.Sessions[0].Message.IsSynthetic.Should().BeTrue();
         result.UsedSyntheticSessions.Should().BeTrue();
-        result.Issues.Should().Contain(i => i.Code == "FIT_SYNTHETIC_SESSION");
+        result.Issues.Should().Contain(i => i.Code == "fit.synthetic-session");
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public sealed class FitSyntheticRecoveryServiceTests
 
         result.Laps.Should().HaveCount(1);
         result.Laps[0].Message.IsSynthetic.Should().BeTrue();
-        result.Issues.Should().Contain(i => i.Code == "FIT_SYNTHETIC_LAP");
+        result.Issues.Should().Contain(i => i.Code == "fit.synthetic-lap");
     }
 
     [Fact]

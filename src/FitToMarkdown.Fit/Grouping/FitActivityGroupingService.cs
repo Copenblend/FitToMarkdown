@@ -8,6 +8,7 @@ namespace FitToMarkdown.Fit.Grouping;
 internal sealed class FitActivityGroupingResult
 {
     public IReadOnlyList<FitSession> GroupedSessions { get; init; } = [];
+    public IReadOnlyList<string> AmbiguityWarnings { get; init; } = [];
 }
 
 /// <summary>
@@ -44,10 +45,11 @@ internal sealed class FitActivityGroupingService
         }
 
         // Multi-session: group laps, records, lengths, events by session
+        var ambiguityWarnings = new List<string>();
         var lapsBySession = GroupLapsBySession(sessions, laps);
-        var recordsBySession = GroupByTimestamp(sessions, records, static r => r.TimestampUtc);
-        var lengthsBySession = GroupByTimestamp(sessions, lengths, static l => l.Range.StartTimeUtc);
-        var eventsBySession = GroupByTimestamp(sessions, events, static e => e.TimestampUtc);
+        var recordsBySession = GroupByTimestamp(sessions, records, static r => r.TimestampUtc, "Record", ambiguityWarnings);
+        var lengthsBySession = GroupByTimestamp(sessions, lengths, static l => l.Range.StartTimeUtc, "Length", ambiguityWarnings);
+        var eventsBySession = GroupByTimestamp(sessions, events, static e => e.TimestampUtc, "Event", ambiguityWarnings);
 
         var groupedSessions = new List<FitSession>(sessions.Count);
         for (int i = 0; i < sessions.Count; i++)
@@ -65,7 +67,7 @@ internal sealed class FitActivityGroupingService
             });
         }
 
-        return new FitActivityGroupingResult { GroupedSessions = groupedSessions };
+        return new FitActivityGroupingResult { GroupedSessions = groupedSessions, AmbiguityWarnings = ambiguityWarnings };
     }
 
     private static Dictionary<int, List<FitLap>> GroupLapsBySession(
@@ -117,13 +119,20 @@ internal sealed class FitActivityGroupingService
     private static Dictionary<int, List<T>> GroupByTimestamp<T>(
         IReadOnlyList<FitSession> sessions,
         IReadOnlyList<T> items,
-        Func<T, DateTimeOffset?> timestampSelector)
+        Func<T, DateTimeOffset?> timestampSelector,
+        string itemTypeName,
+        List<string> ambiguityWarnings)
     {
         var result = new Dictionary<int, List<T>>();
 
         foreach (var item in items)
         {
-            int sessionIdx = FindSessionForTimestamp(sessions, timestampSelector(item));
+            var ts = timestampSelector(item);
+            if (ts is null && sessions.Count > 1)
+            {
+                ambiguityWarnings.Add($"{itemTypeName} item has no timestamp and cannot be deterministically assigned across {sessions.Count} sessions.");
+            }
+            int sessionIdx = FindSessionForTimestamp(sessions, ts);
             if (sessionIdx >= 0)
             {
                 if (!result.TryGetValue(sessionIdx, out var list))

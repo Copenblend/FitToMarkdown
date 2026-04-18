@@ -12,6 +12,14 @@ namespace FitToMarkdown.Fit.Mapping;
 internal sealed class FitDeveloperFieldResolver
 {
     private readonly Dictionary<(byte DevDataIndex, byte FieldDefNum), FieldDescriptionMesg> _lookup;
+    private readonly List<(byte DevDataIndex, byte FieldDefNum)> _duplicateDefinitions = [];
+    private readonly List<(byte DevDataIndex, byte FieldDefNum)> _unresolvedFields = [];
+
+    /// <summary>Gets the developer field definition keys that had duplicate definitions.</summary>
+    internal IReadOnlyList<(byte DevDataIndex, byte FieldDefNum)> DuplicateDefinitions => _duplicateDefinitions;
+
+    /// <summary>Gets the developer field keys that could not be resolved to a definition.</summary>
+    internal IReadOnlyList<(byte DevDataIndex, byte FieldDefNum)> UnresolvedFields => _unresolvedFields;
 
     /// <summary>
     /// Initializes a new instance building a lookup from the accumulated field descriptions.
@@ -27,7 +35,12 @@ internal sealed class FitDeveloperFieldResolver
             byte? fieldNum = mesg.GetFieldDefinitionNumber();
             if (devIdx.HasValue && fieldNum.HasValue)
             {
-                _lookup[(devIdx.Value, fieldNum.Value)] = mesg;
+                var key = (devIdx.Value, fieldNum.Value);
+                if (_lookup.ContainsKey(key))
+                {
+                    _duplicateDefinitions.Add(key);
+                }
+                _lookup[key] = mesg;
             }
         }
     }
@@ -48,6 +61,15 @@ internal sealed class FitDeveloperFieldResolver
             byte devDataIndex = devField.DeveloperDataIndex;
             byte fieldDefNum = devField.Num;
             bool resolved = _lookup.ContainsKey((devDataIndex, fieldDefNum));
+
+            if (!resolved)
+            {
+                var unresolvedKey = (devDataIndex, fieldDefNum);
+                if (!_unresolvedFields.Contains(unresolvedKey))
+                {
+                    _unresolvedFields.Add(unresolvedKey);
+                }
+            }
 
             object? rawValue = devField.GetValue();
             var (kind, numeric, integer, boolean, text) = ClassifyValue(rawValue);

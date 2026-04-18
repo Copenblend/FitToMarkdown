@@ -56,7 +56,9 @@ internal sealed class FitDecodeCoordinator
         {
             // Truncated or corrupt — partial data in accumulator is still usable
             hadFault = true;
-            faultMessage = ex.Message;
+            faultMessage = accumulator.FileIdCount > 0
+                ? $"Chained-file fault after {accumulator.FileIdCount} valid segment(s): {ex.Message}"
+                : ex.Message;
             faultExceptionType = ex.GetType().FullName;
         }
 

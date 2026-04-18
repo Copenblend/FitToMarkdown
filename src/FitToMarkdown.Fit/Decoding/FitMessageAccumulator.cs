@@ -10,6 +10,9 @@ internal sealed class FitMessageAccumulator
     private int _parseSequence;
 
     private readonly List<(FileIdMesg Message, int Sequence)> _fileIdMesgs = [];
+
+    /// <summary>Gets the number of FileIdMesg messages accumulated so far.</summary>
+    public int FileIdCount => _fileIdMesgs.Count;
     private readonly List<(FileCreatorMesg Message, int Sequence)> _fileCreatorMesgs = [];
     private readonly List<(DeviceInfoMesg Message, int Sequence)> _deviceInfoMesgs = [];
     private readonly List<(UserProfileMesg Message, int Sequence)> _userProfileMesgs = [];
