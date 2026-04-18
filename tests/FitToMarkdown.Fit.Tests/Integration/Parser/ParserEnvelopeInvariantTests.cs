@@ -56,7 +56,7 @@ public sealed class ParserEnvelopeInvariantTests
 
         var result = _builder.Build(snapshot, options);
 
-        FitParseAssertions.AssertFailed(result, "FIT_MISSING_FILE_ID");
+        FitParseAssertions.AssertFailed(result, "fit.missing-file-id");
     }
 
     [Fact]

@@ -121,12 +121,17 @@ internal sealed class MarkdownRenderCoordinator
             }
         }
 
-        // Ensure trailing newline
+        // Final hygiene pass
         var result = sb.ToString();
-        if (result.Length > 0 && result[^1] != '\n')
-        {
-            result += '\n';
-        }
+
+        // 1. Normalize to LF-only
+        result = result.Replace("\r\n", "\n").Replace("\r", "\n");
+
+        // 2. Remove leading whitespace before frontmatter
+        result = result.TrimStart();
+
+        // 3. Ensure exactly one trailing newline
+        result = result.TrimEnd() + "\n";
 
         return result;
     }

@@ -17,13 +17,13 @@ internal static class DeveloperFieldsRenderer
         foreach (var group in groups)
         {
             string subtitle = BuildGroupSubtitle(group);
-            writer.AppendHeading(3, subtitle);
+            writer.AppendHeading(3, MarkdownEscaper.EscapeHeading(subtitle));
 
             foreach (var value in group.Values)
             {
                 string display = FormatFieldValue(value);
                 string units = !string.IsNullOrEmpty(value.Units) ? $" {MarkdownEscaper.SanitizeFitString(value.Units)}" : string.Empty;
-                string name = MarkdownEscaper.SanitizeFitString(value.FieldName) ?? "Unknown";
+                string name = MarkdownEscaper.EscapeMarkdownText(MarkdownEscaper.SanitizeFitString(value.FieldName) ?? "Unknown");
                 writer.AppendBulletItem($"**{name}:** {display}{units}");
             }
         }

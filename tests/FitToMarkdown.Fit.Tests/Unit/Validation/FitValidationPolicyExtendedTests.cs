@@ -26,7 +26,7 @@ public sealed class FitValidationPolicyExtendedTests
 
         result.IsValid.Should().BeFalse();
         result.Issues.Should().Contain(i =>
-            i.Code == "FIT_DECODE_FAULT" &&
+            i.Code == "fit.decode-fault" &&
             i.Severity == FitParseIssueSeverity.Error);
     }
 
@@ -42,7 +42,7 @@ public sealed class FitValidationPolicyExtendedTests
 
         result.IsValid.Should().BeTrue("integrity validation is disabled for non-activity files");
         result.Issues.Should().Contain(i =>
-            i.Code == "FIT_DECODE_FAULT" &&
+            i.Code == "fit.decode-fault" &&
             i.Severity == FitParseIssueSeverity.Warning);
     }
 
@@ -59,7 +59,7 @@ public sealed class FitValidationPolicyExtendedTests
         // Activity faults are warnings, not errors — recovery can handle them
         result.IsValid.Should().BeTrue();
         result.Issues.Should().Contain(i =>
-            i.Code == "FIT_DECODE_FAULT" &&
+            i.Code == "fit.decode-fault" &&
             i.Severity == FitParseIssueSeverity.Warning);
     }
 
@@ -108,7 +108,7 @@ public sealed class FitValidationPolicyExtendedTests
 
         result.IsValid.Should().BeFalse();
         result.Issues.Should().Contain(i =>
-            i.Code == "FIT_MISSING_FILE_ID" &&
+            i.Code == "fit.missing-file-id" &&
             i.Severity == FitParseIssueSeverity.Error);
     }
 

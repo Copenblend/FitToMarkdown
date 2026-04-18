@@ -50,17 +50,13 @@ internal sealed class FitSyntheticRecoveryService
         bool usedSyntheticActivity = false;
         bool usedSyntheticSessions = false;
 
-        var firstTimestamp = records
+        var timestamps = records
             .Where(r => r.TimestampUtc.HasValue)
             .Select(r => r.TimestampUtc!.Value)
-            .DefaultIfEmpty()
-            .Min();
+            .ToList();
 
-        var lastTimestamp = records
-            .Where(r => r.TimestampUtc.HasValue)
-            .Select(r => r.TimestampUtc!.Value)
-            .DefaultIfEmpty()
-            .Max();
+        var firstTimestamp = timestamps.Count > 0 ? timestamps.Min() : default;
+        var lastTimestamp = timestamps.Count > 0 ? timestamps.Max() : default;
 
         var timeSpan = firstTimestamp != default && lastTimestamp != default
             ? lastTimestamp - firstTimestamp

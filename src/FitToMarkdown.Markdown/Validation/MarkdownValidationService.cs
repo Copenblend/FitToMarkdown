@@ -14,11 +14,11 @@ internal sealed class MarkdownValidationService
             var pipeline = MarkdownPipelineFactory.CreateValidationPipeline();
             var document = Markdig.Markdown.Parse(markdown, pipeline);
             if (document.Count == 0)
-                allIssues.Add("Document is empty after parsing.");
+                allIssues.Add("[Content] Document is empty after parsing.");
         }
         catch (Exception ex)
         {
-            allIssues.Add($"Markdown parse error: {ex.Message}");
+            allIssues.Add($"[Parse] Markdown parse error: {ex.Message}");
             issues = allIssues;
             return false;
         }

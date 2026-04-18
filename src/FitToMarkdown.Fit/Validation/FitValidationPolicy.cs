@@ -38,7 +38,7 @@ internal sealed class FitValidationPolicy
                 issues.Add(new FitParseIssue
                 {
                     Severity = FitParseIssueSeverity.Error,
-                    Code = "FIT_DECODE_FAULT",
+                    Code = "fit.decode-fault",
                     Message = $"Decode fault in non-activity file: {snapshot.DecodeFaultMessage}",
                     Recoverable = false,
                 });

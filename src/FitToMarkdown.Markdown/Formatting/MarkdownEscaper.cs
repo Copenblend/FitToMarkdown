@@ -12,7 +12,8 @@ internal static class MarkdownEscaper
         return text
             .Replace("|", "\\|")
             .Replace("\n", " ")
-            .Replace("\r", "");
+            .Replace("\r", "")
+            .Replace("\t", " ");
     }
 
     internal static string EscapeMarkdownText(string text)
@@ -64,5 +65,18 @@ internal static class MarkdownEscaper
             .Replace("\n", " ")
             .Replace("\r", "")
             .Replace("#", "\\#");
+    }
+
+    internal static string EscapeYamlValue(string? text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return string.Empty;
+
+        // Sanitize FIT strings first
+        text = SanitizeFitString(text);
+
+        // If value contains characters that could break YAML, it needs quoting
+        // This is handled by YamlScalarFormatter, so just sanitize here
+        return text;
     }
 }

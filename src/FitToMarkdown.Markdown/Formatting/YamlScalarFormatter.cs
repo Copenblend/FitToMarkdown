@@ -1,10 +1,14 @@
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace FitToMarkdown.Markdown.Formatting;
 
-internal static class YamlScalarFormatter
+internal static partial class YamlScalarFormatter
 {
+    [GeneratedRegex(@"^\d{4}-\d{2}", RegexOptions.None, matchTimeoutMilliseconds: 100)]
+    private static partial Regex IsoDateLikePattern();
+
     internal static string? FormatScalar(string key, object? value)
     {
         if (value is null)
@@ -56,6 +60,10 @@ internal static class YamlScalarFormatter
 
         // Numeric-like values that should remain as strings
         if (double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
+            return true;
+
+        // ISO date-like values (e.g. "2024-06-15") that YAML parsers auto-convert
+        if (IsoDateLikePattern().IsMatch(value))
             return true;
 
         return false;

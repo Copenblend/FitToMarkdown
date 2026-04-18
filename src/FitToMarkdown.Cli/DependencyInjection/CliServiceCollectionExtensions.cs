@@ -43,6 +43,7 @@ internal static class CliServiceCollectionExtensions
             sp.GetRequiredService<IAnsiConsole>()));
         services.AddSingleton(sp => new CliExceptionRenderer(
             sp.GetRequiredService<IAnsiConsole>()));
+        services.AddSingleton(_ => new BatchConcurrencyPolicy());
 
         services.AddTransient(sp => new ConversionBatchRunner(
             sp.GetRequiredService<IFitFileParser>(),
@@ -63,7 +64,8 @@ internal static class CliServiceCollectionExtensions
             sp.GetRequiredService<OutputPathResolver>(),
             sp.GetRequiredService<ConversionBatchRunner>(),
             sp.GetRequiredService<ConvertSummaryRenderer>(),
-            sp.GetRequiredService<CliExceptionRenderer>()));
+            sp.GetRequiredService<CliExceptionRenderer>(),
+            sp.GetRequiredService<BatchConcurrencyPolicy>()));
         services.AddTransient<IInfoCommandWorkflow>(sp => new InfoCommandWorkflow(
             sp.GetRequiredService<IAnsiConsole>(),
             sp.GetRequiredService<ICliFileSystem>(),

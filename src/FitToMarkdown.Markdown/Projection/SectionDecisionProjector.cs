@@ -27,6 +27,8 @@ internal static class SectionDecisionProjector
         var decisions = new List<SectionRenderDecision>();
         int order = 0;
 
+        bool isMonitoring = document.ActivityContent is null && document.MonitoringContent is not null;
+
         // Frontmatter
         decisions.Add(DecideFrontmatter(ref order, options, frontmatter));
 
@@ -34,28 +36,44 @@ internal static class SectionDecisionProjector
         decisions.Add(DecideOverview(ref order, overview));
 
         // SessionSummary
-        decisions.Add(DecideSessionSummary(ref order, sessions));
+        decisions.Add(isMonitoring
+            ? ExcludeForMonitoring(ref order, FitMarkdownSectionKey.SessionSummary)
+            : DecideSessionSummary(ref order, sessions));
 
         // SessionDetails — document-level aggregate; individual decisions are per-session
-        decisions.Add(DecideSessionDetails(ref order, sessions));
+        decisions.Add(isMonitoring
+            ? ExcludeForMonitoring(ref order, FitMarkdownSectionKey.SessionDetails)
+            : DecideSessionDetails(ref order, sessions));
 
         // LapDetails — document-level aggregate
-        decisions.Add(DecideLapDetails(ref order, options, sessions));
+        decisions.Add(isMonitoring
+            ? ExcludeForMonitoring(ref order, FitMarkdownSectionKey.LapDetails)
+            : DecideLapDetails(ref order, options, sessions));
 
         // LengthDetails
-        decisions.Add(DecideLengthDetails(ref order, sessions));
+        decisions.Add(isMonitoring
+            ? ExcludeForMonitoring(ref order, FitMarkdownSectionKey.LengthDetails)
+            : DecideLengthDetails(ref order, sessions));
 
         // RecordSummary
-        decisions.Add(DecideRecordSummary(ref order, globalRecordSummary, sessions));
+        decisions.Add(isMonitoring
+            ? ExcludeForMonitoring(ref order, FitMarkdownSectionKey.RecordSummary)
+            : DecideRecordSummary(ref order, globalRecordSummary, sessions));
 
         // RecordTimeSeries
-        decisions.Add(DecideRecordTimeSeries(ref order, options, globalRecordSamples, sessions));
+        decisions.Add(isMonitoring
+            ? ExcludeForMonitoring(ref order, FitMarkdownSectionKey.RecordTimeSeries)
+            : DecideRecordTimeSeries(ref order, options, globalRecordSamples, sessions));
 
         // HeartRateZones
-        decisions.Add(DecideByPresence(ref order, FitMarkdownSectionKey.HeartRateZones, heartRateZones is not null, heartRateZones?.Zones.Count));
+        decisions.Add(isMonitoring
+            ? ExcludeForMonitoring(ref order, FitMarkdownSectionKey.HeartRateZones)
+            : DecideByPresence(ref order, FitMarkdownSectionKey.HeartRateZones, heartRateZones is not null, heartRateZones?.Zones.Count));
 
         // HrvData
-        decisions.Add(DecideByPresence(ref order, FitMarkdownSectionKey.HrvData, hrvSummary is not null && hrvSummary.SampleCount > 0, hrvSummary?.SampleCount));
+        decisions.Add(isMonitoring
+            ? ExcludeForMonitoring(ref order, FitMarkdownSectionKey.HrvData)
+            : DecideByPresence(ref order, FitMarkdownSectionKey.HrvData, hrvSummary is not null && hrvSummary.SampleCount > 0, hrvSummary?.SampleCount));
 
         // Devices
         decisions.Add(DecideByPresence(ref order, FitMarkdownSectionKey.Devices, devices.Count > 0, devices.Count));
@@ -354,6 +372,18 @@ internal static class SectionDecisionProjector
         };
     }
 
+    private static SectionRenderDecision ExcludeForMonitoring(ref int order, FitMarkdownSectionKey key)
+    {
+        return new SectionRenderDecision
+        {
+            Section = key,
+            Order = order++,
+            ShouldRender = false,
+            ItemCount = 0,
+            OmissionReason = OmissionReasons.MonitoringFileType,
+        };
+    }
+
     private static SectionRenderDecision DecideDeveloperFields(
         ref int order,
         MarkdownDocumentOptions options,
@@ -442,6 +472,7 @@ internal static class SectionDecisionProjector
         internal const string LapDetailThresholdExceeded = "lap-detail-threshold-exceeded";
         internal const string DuplicateGlobalSummary = "duplicate-global-summary";
         internal const string TokenBudgetCompact = "token-budget-compact";
+        internal const string MonitoringFileType = "monitoring-file-type";
         internal const string UnsupportedCurrentContract = "unsupported-current-contract";
     }
 }

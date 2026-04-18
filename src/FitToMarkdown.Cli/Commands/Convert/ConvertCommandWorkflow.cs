@@ -18,6 +18,7 @@ internal sealed class ConvertCommandWorkflow : IConvertCommandWorkflow
     private readonly ConversionBatchRunner _batchRunner;
     private readonly ConvertSummaryRenderer _summaryRenderer;
     private readonly CliExceptionRenderer _exceptionRenderer;
+    private readonly BatchConcurrencyPolicy _concurrencyPolicy;
 
     internal ConvertCommandWorkflow(
         IAnsiConsole console,
@@ -29,7 +30,8 @@ internal sealed class ConvertCommandWorkflow : IConvertCommandWorkflow
         OutputPathResolver outputPathResolver,
         ConversionBatchRunner batchRunner,
         ConvertSummaryRenderer summaryRenderer,
-        CliExceptionRenderer exceptionRenderer)
+        CliExceptionRenderer exceptionRenderer,
+        BatchConcurrencyPolicy concurrencyPolicy)
     {
         _console = console;
         _fileSystem = fileSystem;
@@ -41,6 +43,7 @@ internal sealed class ConvertCommandWorkflow : IConvertCommandWorkflow
         _batchRunner = batchRunner;
         _summaryRenderer = summaryRenderer;
         _exceptionRenderer = exceptionRenderer;
+        _concurrencyPolicy = concurrencyPolicy;
     }
 
     public async Task<int> ExecuteAsync(ConvertCommandSettings settings, CancellationToken cancellationToken = default)
@@ -164,6 +167,17 @@ internal sealed class ConvertCommandWorkflow : IConvertCommandWorkflow
             NoInteraction = settings.NoInteraction,
         };
 
+        // 7.5 Check concurrency configuration
+        var concurrencyWarning = _concurrencyPolicy.GetConfigurationWarning();
+        if (concurrencyWarning is not null)
+        {
+            _exceptionRenderer.RenderWarning(concurrencyWarning);
+        }
+
+        var degreeOfParallelism = _concurrencyPolicy.GetEffectiveDegreeOfParallelism(
+            isDirectoryMode: target.Kind == InputTargetKind.Directory,
+            selectedFileCount: files.Count);
+
         // 8. Run conversion with progress
         var summary = await _console.Progress()
             .Columns(
@@ -178,7 +192,7 @@ internal sealed class ConvertCommandWorkflow : IConvertCommandWorkflow
                 var progressTask = ctx.AddTask("Starting conversion...", maxValue: total);
                 var started = 0;
 
-                var result = await _batchRunner.RunAsync(plan, cancellationToken, (index, fileName) =>
+                var result = await _batchRunner.RunAsync(plan, degreeOfParallelism, cancellationToken, (index, fileName) =>
                 {
                     if (started > 0)
                         progressTask.Increment(1);

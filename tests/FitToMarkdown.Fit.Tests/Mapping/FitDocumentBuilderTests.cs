@@ -53,6 +53,6 @@ public sealed class FitDocumentBuilderTests
         // AllowPartialExtraction means we proceed even with validation errors
         result.Should().NotBeNull();
         result.Document.Should().NotBeNull();
-        result.Issues.Should().Contain(i => i.Code == "FIT_MISSING_FILE_ID");
+        result.Issues.Should().Contain(i => i.Code == "fit.missing-file-id");
     }
 }
