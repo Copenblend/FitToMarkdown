@@ -10,65 +10,61 @@ internal sealed partial class SuggestedFileNameFactory
 
     internal string Generate(FitMarkdownDocument document)
     {
-        var parts = new List<string>();
-
-        // Timestamp part
+        // Timestamp part: YYYYMMDD_hhmmss
+        string timestampPart;
         if (document.HeadingTimestampUtc is not null)
         {
-            parts.Add(document.HeadingTimestampUtc.Value.ToUniversalTime().ToString("yyyyMMdd-HHmmss"));
+            timestampPart = document.HeadingTimestampUtc.Value.ToUniversalTime().ToString("yyyyMMdd_HHmmss");
         }
         else
         {
-            parts.Add("unknown-time");
+            timestampPart = "unknown_time";
         }
 
         // Sport or file type part
         string? sport = document.Frontmatter.Sport?.ToString();
         string? fileType = document.Frontmatter.FileType?.ToString();
-        parts.Add(!string.IsNullOrEmpty(sport) ? sport : (!string.IsNullOrEmpty(fileType) ? fileType : "activity"));
+        string sportPart = !string.IsNullOrEmpty(sport) ? sport : (!string.IsNullOrEmpty(fileType) ? fileType : "activity");
 
-        // Sub-sport, if present
-        string? subSport = document.Frontmatter.SubSport?.ToString();
-        if (!string.IsNullOrEmpty(subSport) && !string.Equals(subSport, "Generic", StringComparison.OrdinalIgnoreCase))
+        // Format: YYYYMMDD_hhmmss_{sport}
+        string baseName = $"{timestampPart}_{Sanitize(sportPart)}";
+
+        if (baseName.Length > MaxBaseLength)
+            baseName = baseName[..MaxBaseLength];
+
+        // Trim trailing underscores
+        baseName = baseName.TrimEnd('_');
+
+        if (string.IsNullOrEmpty(baseName))
+            baseName = "fit_document";
+
+        return baseName + ".md";
+    }
+
+    private static string Sanitize(string input)
+    {
+        // Insert underscores before uppercase letters in PascalCase (e.g. "CrossCountrySkiing" → "Cross_Country_Skiing")
+        var sb = new StringBuilder(input.Length + 4);
+        for (int i = 0; i < input.Length; i++)
         {
-            parts.Add(subSport);
+            char c = input[i];
+            if (i > 0 && char.IsUpper(c) && !char.IsUpper(input[i - 1]))
+                sb.Append('_');
+            sb.Append(c);
         }
 
-        string joined = string.Join("-", parts);
-        string kebab = ToKebabCase(joined);
+        // Replace any non-alphanumeric-underscore chars
+        string result = InvalidFileCharsRegex().Replace(sb.ToString(), "_");
 
-        if (kebab.Length > MaxBaseLength)
-            kebab = kebab[..MaxBaseLength];
+        // Collapse repeated underscores
+        result = RepeatedUnderscoreRegex().Replace(result, "_");
 
-        // Trim trailing dashes
-        kebab = kebab.TrimEnd('-');
-
-        if (string.IsNullOrEmpty(kebab))
-            kebab = "fit-document";
-
-        return kebab + ".md";
+        return result.Trim('_');
     }
 
-    private static string ToKebabCase(string input)
-    {
-        // Lowercase
-        string lower = input.ToLowerInvariant();
+    [GeneratedRegex(@"[^\w]+")]
+    private static partial Regex InvalidFileCharsRegex();
 
-        // Replace whitespace and punctuation runs with single dash
-        string cleaned = WhitespaceOrPunctuationRegex().Replace(lower, "-");
-
-        // Collapse repeated dashes
-        cleaned = RepeatedDashRegex().Replace(cleaned, "-");
-
-        // Trim leading/trailing dashes
-        cleaned = cleaned.Trim('-');
-
-        return cleaned;
-    }
-
-    [GeneratedRegex(@"[\s_.,;:!?/\\(){}[\]]+")]
-    private static partial Regex WhitespaceOrPunctuationRegex();
-
-    [GeneratedRegex(@"-{2,}")]
-    private static partial Regex RepeatedDashRegex();
+    [GeneratedRegex(@"_{2,}")]
+    private static partial Regex RepeatedUnderscoreRegex();
 }

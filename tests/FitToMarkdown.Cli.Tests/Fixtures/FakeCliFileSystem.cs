@@ -68,6 +68,13 @@ internal sealed class FakeCliFileSystem : ICliFileSystem
         return Task.CompletedTask;
     }
 
+    public Task<string> ReadAllTextAsync(string path, CancellationToken cancellationToken)
+    {
+        if (Files.TryGetValue(path, out var bytes))
+            return Task.FromResult(System.Text.Encoding.UTF8.GetString(bytes));
+        throw new FileNotFoundException("File not found.", path);
+    }
+
     public void AddFitFile(string path)
     {
         Files[path] = [0x0E, 0x20, 0x00, 0x00];
@@ -77,4 +84,12 @@ internal sealed class FakeCliFileSystem : ICliFileSystem
     }
 
     public void AddDirectory(string path) => Directories.Add(path);
+
+    public void AddTextFile(string path, string content)
+    {
+        Files[path] = System.Text.Encoding.UTF8.GetBytes(content);
+        var directory = Path.GetDirectoryName(path);
+        if (!string.IsNullOrEmpty(directory))
+            Directories.Add(directory);
+    }
 }

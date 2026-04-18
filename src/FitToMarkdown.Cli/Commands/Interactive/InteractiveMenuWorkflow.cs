@@ -1,5 +1,6 @@
 using FitToMarkdown.Cli.Commands.Convert;
 using FitToMarkdown.Cli.Commands.Info;
+using FitToMarkdown.Cli.Commands.Progression;
 using FitToMarkdown.Cli.Commands.Version;
 using FitToMarkdown.Cli.Configuration;
 using FitToMarkdown.Cli.Models;
@@ -14,6 +15,7 @@ internal sealed class InteractiveMenuWorkflow
     private readonly IAnsiConsole _console;
     private readonly IConvertCommandWorkflow _convertWorkflow;
     private readonly IInfoCommandWorkflow _infoWorkflow;
+    private readonly IProgressionCommandWorkflow _progressionWorkflow;
     private readonly IVersionCommandWorkflow _versionWorkflow;
     private readonly InputPathResolver _pathResolver;
     private readonly CliExceptionRenderer _exceptionRenderer;
@@ -22,6 +24,7 @@ internal sealed class InteractiveMenuWorkflow
         IAnsiConsole console,
         IConvertCommandWorkflow convertWorkflow,
         IInfoCommandWorkflow infoWorkflow,
+        IProgressionCommandWorkflow progressionWorkflow,
         IVersionCommandWorkflow versionWorkflow,
         InputPathResolver pathResolver,
         CliExceptionRenderer exceptionRenderer)
@@ -29,6 +32,7 @@ internal sealed class InteractiveMenuWorkflow
         _console = console;
         _convertWorkflow = convertWorkflow;
         _infoWorkflow = infoWorkflow;
+        _progressionWorkflow = progressionWorkflow;
         _versionWorkflow = versionWorkflow;
         _pathResolver = pathResolver;
         _exceptionRenderer = exceptionRenderer;
@@ -53,11 +57,12 @@ internal sealed class InteractiveMenuWorkflow
                 action = _console.Prompt(
                     new SelectionPrompt<string>()
                         .Title("[bold]What would you like to do?[/]")
-                        .PageSize(6)
+                        .PageSize(7)
                         .WrapAround()
                         .HighlightStyle(CliTheme.HighlightStyle)
                         .AddChoices(
                             "Convert FIT files to Markdown",
+                            "Build Sport Progression",
                             "Inspect FIT file metadata",
                             "Show version",
                             "Exit"));
@@ -78,6 +83,11 @@ internal sealed class InteractiveMenuWorkflow
             {
                 case "Convert FIT files to Markdown":
                     await _convertWorkflow.ExecuteAsync(new ConvertCommandSettings(), cancellationToken)
+                        .ConfigureAwait(false);
+                    break;
+
+                case "Build Sport Progression":
+                    await _progressionWorkflow.ExecuteAsync(new ProgressionCommandSettings(), cancellationToken)
                         .ConfigureAwait(false);
                     break;
 

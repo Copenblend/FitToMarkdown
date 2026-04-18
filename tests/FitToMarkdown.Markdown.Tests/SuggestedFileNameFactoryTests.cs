@@ -10,7 +10,7 @@ namespace FitToMarkdown.Markdown.Tests;
 public sealed class SuggestedFileNameFactoryTests
 {
     [Fact]
-    public void Generate_should_produce_kebab_case_with_sport()
+    public void Generate_should_produce_underscore_format_with_sport()
     {
         var factory = new SuggestedFileNameFactory();
         var doc = new FitMarkdownDocument
@@ -25,10 +25,7 @@ public sealed class SuggestedFileNameFactoryTests
 
         var result = factory.Generate(doc);
 
-        result.Should().EndWith(".md");
-        result.Should().Contain("20240615");
-        result.Should().Contain("running");
-        result.Should().Contain("street");
+        result.Should().Be("20240615_083000_Running.md");
     }
 
     [Fact]
@@ -45,9 +42,7 @@ public sealed class SuggestedFileNameFactoryTests
 
         var result = factory.Generate(doc);
 
-        result.Should().Contain("unknown-time");
-        result.Should().Contain("cycling");
-        result.Should().EndWith(".md");
+        result.Should().Be("unknown_time_Cycling.md");
     }
 
     [Fact]
@@ -71,7 +66,7 @@ public sealed class SuggestedFileNameFactoryTests
     }
 
     [Fact]
-    public void Generate_should_skip_generic_subsport()
+    public void Generate_should_not_include_subsport_in_filename()
     {
         var factory = new SuggestedFileNameFactory();
         var doc = new FitMarkdownDocument
@@ -80,12 +75,63 @@ public sealed class SuggestedFileNameFactoryTests
             Frontmatter = new FitFrontmatter
             {
                 Sport = FitSport.Running,
-                SubSport = FitSubSport.Generic,
+                SubSport = FitSubSport.Trail,
             },
         };
 
         var result = factory.Generate(doc);
 
-        result.Should().NotContain("generic");
+        result.Should().Be("20240615_083000_Running.md");
+    }
+
+    [Fact]
+    public void Generate_should_split_pascal_case_sport_with_underscores()
+    {
+        var factory = new SuggestedFileNameFactory();
+        var doc = new FitMarkdownDocument
+        {
+            HeadingTimestampUtc = new DateTimeOffset(2024, 6, 15, 8, 30, 0, TimeSpan.Zero),
+            Frontmatter = new FitFrontmatter
+            {
+                Sport = FitSport.CrossCountrySkiing,
+            },
+        };
+
+        var result = factory.Generate(doc);
+
+        result.Should().Be("20240615_083000_Cross_Country_Skiing.md");
+    }
+
+    [Fact]
+    public void Generate_should_use_activity_when_no_sport()
+    {
+        var factory = new SuggestedFileNameFactory();
+        var doc = new FitMarkdownDocument
+        {
+            HeadingTimestampUtc = new DateTimeOffset(2024, 6, 15, 8, 30, 0, TimeSpan.Zero),
+            Frontmatter = new FitFrontmatter(),
+        };
+
+        var result = factory.Generate(doc);
+
+        result.Should().Be("20240615_083000_activity.md");
+    }
+
+    [Fact]
+    public void Generate_should_handle_meditation_sport()
+    {
+        var factory = new SuggestedFileNameFactory();
+        var doc = new FitMarkdownDocument
+        {
+            HeadingTimestampUtc = new DateTimeOffset(2026, 4, 15, 12, 22, 26, TimeSpan.Zero),
+            Frontmatter = new FitFrontmatter
+            {
+                Sport = FitSport.Meditation,
+            },
+        };
+
+        var result = factory.Generate(doc);
+
+        result.Should().Be("20260415_122226_Meditation.md");
     }
 }

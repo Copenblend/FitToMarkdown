@@ -46,4 +46,9 @@ internal sealed class SystemCliFileSystem : ICliFileSystem
     {
         return File.WriteAllTextAsync(path, content, cancellationToken);
     }
+
+    public Task<string> ReadAllTextAsync(string path, CancellationToken cancellationToken)
+    {
+        return File.ReadAllTextAsync(path, cancellationToken);
+    }
 }
