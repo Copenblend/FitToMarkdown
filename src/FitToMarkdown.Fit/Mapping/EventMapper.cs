@@ -37,9 +37,9 @@ internal static class EventMapper
                 EventType = MapEventType(mesg.GetEventType()),
                 Data = ToNullableUint(mesg.GetData()),
                 Data16 = ToNullableUshort(mesg.GetData16()),
-                TimerTrigger = EnumToString(mesg.GetTimerTrigger()),
+                TimerTrigger = EnumToString(SafeGetEnum(mesg.GetTimerTrigger)),
                 CoursePointIndex = ToNullableUshort(mesg.GetCoursePointIndex()),
-                RiderPosition = EnumToString(mesg.GetRiderPosition()),
+                RiderPosition = EnumToString(SafeGetEnum(mesg.GetRiderPosition)),
 
                 // Dynamic event data fields — deferred to Phase 3
                 BatteryLevelPercent = null,

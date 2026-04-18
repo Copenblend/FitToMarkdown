@@ -18,7 +18,7 @@ public static class CliCommandConfiguration
     /// <param name="applicationVersion">The version string to display for the application.</param>
     public static void Configure(IConfigurator configurator, string applicationVersion)
     {
-        configurator.SetApplicationName("fittomarkdown");
+        configurator.SetApplicationName("ftm");
         configurator.SetApplicationVersion(applicationVersion);
         configurator.Settings.CaseSensitivity = CaseSensitivity.None;
 

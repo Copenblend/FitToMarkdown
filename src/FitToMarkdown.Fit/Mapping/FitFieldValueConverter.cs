@@ -62,6 +62,38 @@ internal static class FitFieldValueConverter
         return value?.ToString();
     }
 
+    /// <summary>
+    /// Safely invokes a FIT SDK enum getter that may throw <see cref="InvalidCastException"/>
+    /// when the stored value does not map to a known enum member.
+    /// </summary>
+    public static T? SafeGetEnum<T>(Func<T?> getter) where T : struct, Enum
+    {
+        try
+        {
+            return getter();
+        }
+        catch (InvalidCastException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Safely invokes a FIT SDK accessor that may throw <see cref="NullReferenceException"/>
+    /// or <see cref="InvalidCastException"/> for missing or unexpected field values.
+    /// </summary>
+    public static TResult? SafeGet<TResult>(Func<TResult?> getter) where TResult : class
+    {
+        try
+        {
+            return getter();
+        }
+        catch (Exception ex) when (ex is NullReferenceException or InvalidCastException)
+        {
+            return null;
+        }
+    }
+
     /// <summary>Converts a FIT SDK byte-array string field to a .NET string, or null.</summary>
     public static string? ByteArrayToString(byte[]? bytes)
     {

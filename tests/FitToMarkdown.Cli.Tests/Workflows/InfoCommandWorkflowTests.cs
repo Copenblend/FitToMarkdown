@@ -25,9 +25,11 @@ public sealed class InfoCommandWorkflowTests
         _inspector = new FakeFitMetadataInspector();
         var tableRenderer = new InfoTableRenderer(_console);
         var exceptionRenderer = new CliExceptionRenderer(_console);
+        var browser = new InteractivePathBrowser(_console, _fileSystem);
+        var pathResolver = new InputPathResolver(_fileSystem, browser);
 
         _workflow = new InfoCommandWorkflow(
-            _console, _fileSystem, _inspector, tableRenderer, exceptionRenderer);
+            _console, _fileSystem, _inspector, tableRenderer, exceptionRenderer, pathResolver);
     }
 
     [Fact]

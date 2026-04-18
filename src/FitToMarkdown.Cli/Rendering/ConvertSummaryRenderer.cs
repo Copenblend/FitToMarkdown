@@ -33,7 +33,7 @@ internal sealed class ConvertSummaryRenderer
             table.AddRow("Skipped", $"[yellow]{summary.SkippedCount}[/]");
 
         table.AddRow("Elapsed", FormatElapsed(summary.TotalElapsed));
-        table.AddRow("Output", CliMarkup.LinkOrText(summary.OutputDirectory));
+        table.AddRow("Output", CliMarkup.Escape(summary.OutputDirectory));
 
         _console.Write(table);
 

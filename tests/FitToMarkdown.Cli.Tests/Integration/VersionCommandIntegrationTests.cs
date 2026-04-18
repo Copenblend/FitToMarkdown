@@ -34,7 +34,7 @@ public sealed class VersionCommandIntegrationTests
 
         app.Run(["version"]);
 
-        console.Output.Should().Contain("fittomarkdown");
+        console.Output.Should().Contain("ftm");
     }
 
     [Fact]

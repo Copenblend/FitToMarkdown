@@ -164,6 +164,105 @@ public enum FitSubSport : byte
     /// <summary>Map.</summary>
     Map = 52,
 
+    /// <summary>Single-gas diving.</summary>
+    SingleGasDiving = 53,
+
+    /// <summary>Multi-gas diving.</summary>
+    MultiGasDiving = 54,
+
+    /// <summary>Gauge diving.</summary>
+    GaugeDiving = 55,
+
+    /// <summary>Apnea diving.</summary>
+    ApneaDiving = 56,
+
+    /// <summary>Apnea hunting.</summary>
+    ApneaHunting = 57,
+
+    /// <summary>Virtual activity.</summary>
+    VirtualActivity = 58,
+
+    /// <summary>Obstacle course (mud runs, wall climbs, etc.).</summary>
+    Obstacle = 59,
+
+    /// <summary>Breathing exercises.</summary>
+    Breathing = 62,
+
+    /// <summary>Sail race.</summary>
+    SailRace = 65,
+
+    /// <summary>Ultra running (ultramarathon).</summary>
+    Ultra = 67,
+
+    /// <summary>Indoor climbing.</summary>
+    IndoorClimbing = 68,
+
+    /// <summary>Bouldering.</summary>
+    Bouldering = 69,
+
+    /// <summary>High-intensity interval training.</summary>
+    Hiit = 70,
+
+    /// <summary>AMRAP (as many reps as possible) HIIT workout.</summary>
+    Amrap = 73,
+
+    /// <summary>EMOM (every minute on the minute) HIIT workout.</summary>
+    Emom = 74,
+
+    /// <summary>Tabata HIIT workout.</summary>
+    Tabata = 75,
+
+    /// <summary>Pickleball.</summary>
+    Pickleball = 84,
+
+    /// <summary>Padel.</summary>
+    Padel = 85,
+
+    /// <summary>Indoor wheelchair walking.</summary>
+    IndoorWheelchairWalk = 86,
+
+    /// <summary>Indoor wheelchair running.</summary>
+    IndoorWheelchairRun = 87,
+
+    /// <summary>Indoor hand cycling.</summary>
+    IndoorHandCycling = 88,
+
+    /// <summary>Squash.</summary>
+    Squash = 94,
+
+    /// <summary>Badminton.</summary>
+    Badminton = 95,
+
+    /// <summary>Racquetball.</summary>
+    Racquetball = 96,
+
+    /// <summary>Table tennis.</summary>
+    TableTennis = 97,
+
+    /// <summary>Canopy flying.</summary>
+    FlyCanopy = 110,
+
+    /// <summary>Paragliding.</summary>
+    FlyParaglide = 111,
+
+    /// <summary>Paramotor flying.</summary>
+    FlyParamotor = 112,
+
+    /// <summary>Pressurized aircraft flying.</summary>
+    FlyPressurized = 113,
+
+    /// <summary>Flying navigation.</summary>
+    FlyNavigate = 114,
+
+    /// <summary>Flying timer.</summary>
+    FlyTimer = 115,
+
+    /// <summary>Visual flight rules flying.</summary>
+    FlyVfr = 118,
+
+    /// <summary>Instrument flight rules flying.</summary>
+    FlyIfr = 119,
+
     /// <summary>All sub-sports.</summary>
     All = 254,
 
